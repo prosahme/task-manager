@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 
-export default function TaskForm() {
+export default function TaskForm({ onSubmit }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -8,16 +9,12 @@ export default function TaskForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!title || !description) {
+      alert("Please fill in all required fields!");
+      return;
+    }
 
-    const taskData = {
-      title,
-      description,
-      dueDate,
-      priority,
-    };
-
-    console.log("Form Submitted:", taskData);
-
+    onSubmit({ title, description, dueDate, priority });
     setTitle("");
     setDescription("");
     setDueDate("");
@@ -25,46 +22,41 @@ export default function TaskForm() {
   };
 
   return (
-    <form className="task-form" onSubmit={handleSubmit}>
-      <h3 className="form-title">Add New Task</h3>
-
-      <label>
-        Title (required)
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-      </label>
-
-      <label>
-        Description
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        ></textarea>
-      </label>
-
-      <label>
-        Due Date
-        <input
-          type="date"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-        />
-      </label>
-
-      <label>
-        Priority
-        <select value={priority} onChange={(e) => setPriority(e.target.value)}>
-          <option>Low</option>
-          <option>Medium</option>
-          <option>High</option>
-        </select>
-      </label>
-
-      <button type="submit">Add Task</button>
-    </form>
+    <motion.form
+      className="task-form"
+      onSubmit={handleSubmit}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <input
+        type="text"
+        placeholder="Task Title ✍️"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <textarea
+        placeholder="Task Description 📝"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
+      <input
+        type="date"
+        value={dueDate}
+        onChange={(e) => setDueDate(e.target.value)}
+      />
+      <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+        <option value="High">🔥 High</option>
+        <option value="Medium">⚡ Medium</option>
+        <option value="Low">🌱 Low</option>
+      </select>
+      <motion.button
+        type="submit"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        ➕ Add Task
+      </motion.button>
+    </motion.form>
   );
 }

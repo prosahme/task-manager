@@ -27,7 +27,6 @@ body {
   color: #94a3b8;
 }
 
-/* TaskForm Styling */
 .task-form {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px);
@@ -104,4 +103,40 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.task-list {
+  display: grid;
+  gap: 15px;
+}
+
+.task-card {
+  background: #f9f9f9;
+  color: #0f1724;
+  padding: 15px;
+  border-radius: 16px;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.priority {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.priority.high {
+  background: #ff6b6b;
+  color: white;
+}
+
+.priority.medium {
+  background: #ffd93d;
+  color: black;
+}
+
+.priority.low {
+  background: #6bcf63;
+  color: black;
 }
