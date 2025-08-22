@@ -1,62 +1,104 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
 
-export default function TaskForm({ onSubmit }) {
+export default function TaskForm({ onSave, editingTask, onCancel }) {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [desc, setDesc] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState("Medium");
+  const isEditing = Boolean(editingTask);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    if (editingTask) {
+      setTitle(editingTask.title || "");
+      setDesc(editingTask.description || "");
+      setDueDate(editingTask.dueDate || "");
+      setPriority(editingTask.priority || "Medium");
+    } else {
+      setTitle("");
+      setDesc("");
+      setDueDate("");
+      setPriority("Medium");
+    }
+  }, [editingTask]);
+
+  function handleSubmit(e) {
     e.preventDefault();
-    if (!title || !description) {
-      alert("Please fill in all required fields!");
+    if (!title.trim()) {
+      alert("Please enter a task title.");
       return;
     }
-
-    onSubmit({ title, description, dueDate, priority });
-    setTitle("");
-    setDescription("");
-    setDueDate("");
-    setPriority("Medium");
-  };
+    onSave(
+      {
+        title: title.trim(),
+        description: desc.trim(),
+        dueDate: dueDate || "",
+        priority,
+      },
+      editingTask?.id || null
+    );
+  }
 
   return (
-    <motion.form
-      className="task-form"
-      onSubmit={handleSubmit}
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <input
-        type="text"
-        placeholder="Task Title ✍️"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <textarea
-        placeholder="Task Description 📝"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <input
-        type="date"
-        value={dueDate}
-        onChange={(e) => setDueDate(e.target.value)}
-      />
-      <select value={priority} onChange={(e) => setPriority(e.target.value)}>
-        <option value="High">🔥 High</option>
-        <option value="Medium">⚡ Medium</option>
-        <option value="Low">🌱 Low</option>
-      </select>
-      <motion.button
-        type="submit"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        ➕ Add Task
-      </motion.button>
-    </motion.form>
+    <form className="form-grid" onSubmit={handleSubmit}>
+      <div className="field">
+        <label>
+          Title <span className="req">*</span>
+        </label>
+        <input
+          className="input"
+          type="text"
+          placeholder="e.g., Finish React assignment"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+      </div>
+
+      <div className="field">
+        <label>Description</label>
+        <textarea
+          className="textarea"
+          rows={4}
+          placeholder="Optional notes…"
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+        />
+      </div>
+
+      <div className="field-row-2">
+        <div className="field">
+          <label>Due date</label>
+          <input
+            className="input"
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+          />
+        </div>
+
+        <div className="field">
+          <label>Priority</label>
+          <select
+            className="select"
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+          >
+            <option>Low</option>
+            <option>Medium</option>
+            <option>High</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="row" style={{ justifyContent: "flex-end", gap: 10 }}>
+        {isEditing && (
+          <button type="button" className="btn btn-ghost" onClick={onCancel}>
+            Cancel
+          </button>
+        )}
+        <button type="submit" className="btn btn-primary">
+          {isEditing ? "Save Changes" : "Add Task"}
+        </button>
+      </div>
+    </form>
   );
 }
