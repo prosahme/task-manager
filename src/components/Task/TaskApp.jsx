@@ -1,26 +1,15 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import TaskForm from "./TaskForm.jsx";
 import TaskCard from "./TaskCard.jsx";
+import useLocalStorage from "../../hooks/useLocalStorage.js";
+import useFetch from "../../hooks/useFetch.js";
 
 const LS_KEY = "tm_tasks_v1";
 
 export default function TaskApp() {
-  const [tasks, setTasks] = useState(() => {
-    try {
-      const raw = localStorage.getItem(LS_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  });
-
+  const [tasks, setTasks] = useLocalStorage(LS_KEY, []);
   const [editing, setEditing] = useState(null);
-
-  useEffect(() => {
-    localStorage.setItem(LS_KEY, JSON.stringify(tasks));
-  }, [tasks]);
-
   function upsertTask(data, id = null) {
     if (id) {
       setTasks((prev) =>
@@ -31,7 +20,7 @@ export default function TaskApp() {
       setEditing(null);
     } else {
       const newTask = {
-        id: (crypto?.randomUUID && crypto.randomUUID()) || String(Date.now()), //from chatgpt because i have to
+        id: (crypto?.randomUUID && crypto.randomUUID()) || String(Date.now()),
         title: data.title,
         description: data.description,
         dueDate: data.dueDate,
@@ -81,6 +70,13 @@ export default function TaskApp() {
   const done = tasks.filter((t) => t.completed).length;
   const allDone = total > 0 && done === total;
 
+  const {
+    data: quoteData,
+    loading: quoteLoading,
+    error: quoteError,
+    refetch: refetchQuote,
+  } = useFetch("https://api.alquran.cloud/v1/ayah/random");
+
   return (
     <section className="task-wrap">
       <motion.aside
@@ -115,7 +111,7 @@ export default function TaskApp() {
         {total === 0 ? (
           <div className="empty-state">
             <h4>No tasks yet</h4>
-            <p>Add your first task and make today count ✨</p>
+            <p>Start by adding your first task and make today count ✨</p>
           </div>
         ) : (
           <>
@@ -125,7 +121,7 @@ export default function TaskApp() {
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                🎉 Everything is complete — enjoy a well-deserved break!
+                🎉 Keep up the good work! All tasks complete.
               </motion.div>
             )}
             <div className="task-list">
@@ -144,6 +140,40 @@ export default function TaskApp() {
           </>
         )}
       </motion.section>
+      <motion.aside
+        className="glass-card quote-card"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.25 }}
+      >
+        <h3>Quran Inspiration</h3>
+        <div className="separator" />
+        {quoteLoading ? (
+          <div className="quote-loading">
+            <div className="spinner" />
+          </div>
+        ) : quoteError ? (
+          <div className="quote-error">
+            <p>Couldn’t fetch ayah 😢</p>
+            <button onClick={refetchQuote}>Retry</button>
+          </div>
+        ) : (
+          <blockquote className="quote">
+            {quoteData?.data?.text || "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ"}
+            <cite
+              style={{
+                display: "block",
+                marginTop: 6,
+                fontSize: ".88rem",
+                color: "var(--muted)",
+              }}
+            >
+              — {quoteData?.data?.surah?.englishName}, Ayah{" "}
+              {quoteData?.data?.numberInSurah}
+            </cite>
+          </blockquote>
+        )}
+      </motion.aside>
     </section>
   );
 }

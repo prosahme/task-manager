@@ -357,3 +357,54 @@ body {
 .icon-btn.danger {
   border-color: rgba(255, 107, 107, 0.35);
 }
+.quote-card {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  margin-bottom: 8px;
+}
+.quote {
+  font-style: italic;
+  margin: 0;
+}
+.quote-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.spinner {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.08);
+  border-top-color: rgba(255, 255, 255, 0.35);
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.storage-error {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 120, 120, 0.18);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 120, 120, 0.06),
+    rgba(255, 120, 120, 0.02)
+  );
+}
+
+.field-error {
+  margin-top: 8px;
+  color: #ff6b6b;
+  font-size: 0.9rem;
+}
+
+.muted {
+  color: var(--muted);
+}

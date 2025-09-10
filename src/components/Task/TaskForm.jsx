@@ -5,6 +5,7 @@ export default function TaskForm({ onSave, editingTask, onCancel }) {
   const [desc, setDesc] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState("Medium");
+  const [error, setError] = useState("");
   const isEditing = Boolean(editingTask);
 
   useEffect(() => {
@@ -13,20 +14,23 @@ export default function TaskForm({ onSave, editingTask, onCancel }) {
       setDesc(editingTask.description || "");
       setDueDate(editingTask.dueDate || "");
       setPriority(editingTask.priority || "Medium");
+      setError("");
     } else {
       setTitle("");
       setDesc("");
       setDueDate("");
       setPriority("Medium");
+      setError("");
     }
   }, [editingTask]);
 
   function handleSubmit(e) {
     e.preventDefault();
     if (!title.trim()) {
-      alert("Please enter a task title.");
+      setError("Task title cannot be blank");
       return;
     }
+    setError("");
     onSave(
       {
         title: title.trim(),
@@ -34,12 +38,12 @@ export default function TaskForm({ onSave, editingTask, onCancel }) {
         dueDate: dueDate || "",
         priority,
       },
-      editingTask?.id || null
+      editingTask?.id ?? null
     );
   }
 
   return (
-    <form className="form-grid" onSubmit={handleSubmit}>
+    <form className="form-grid" onSubmit={handleSubmit} noValidate>
       <div className="field">
         <label>
           Title <span className="req">*</span>
@@ -50,7 +54,13 @@ export default function TaskForm({ onSave, editingTask, onCancel }) {
           placeholder="e.g., Finish React assignment"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          aria-invalid={!!error}
         />
+        {error && (
+          <div className="field-error" role="alert">
+            {error}
+          </div>
+        )}
       </div>
 
       <div className="field">
@@ -91,11 +101,22 @@ export default function TaskForm({ onSave, editingTask, onCancel }) {
 
       <div className="row" style={{ justifyContent: "flex-end", gap: 10 }}>
         {isEditing && (
-          <button type="button" className="btn btn-ghost" onClick={onCancel}>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={() => {
+              setError("");
+              onCancel();
+            }}
+          >
             Cancel
           </button>
         )}
-        <button type="submit" className="btn btn-primary">
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={!title.trim()}
+        >
           {isEditing ? "Save Changes" : "Add Task"}
         </button>
       </div>
