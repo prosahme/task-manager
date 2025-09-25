@@ -7,9 +7,10 @@ import useFetch from "../../hooks/useFetch.js";
 
 const LS_KEY = "tm_tasks_v1";
 
-export default function TaskApp() {
+export default function TaskApp({ filter = "all" }) {
   const [tasks, setTasks] = useLocalStorage(LS_KEY, []);
   const [editing, setEditing] = useState(null);
+
   function upsertTask(data, id = null) {
     if (id) {
       setTasks((prev) =>
@@ -54,11 +55,7 @@ export default function TaskApp() {
       if (a.completed !== b.completed) return a.completed ? 1 : -1;
       const aHas = Boolean(a.dueDate);
       const bHas = Boolean(b.dueDate);
-      if (aHas && bHas) {
-        const ad = new Date(a.dueDate).getTime();
-        const bd = new Date(b.dueDate).getTime();
-        return ad - bd;
-      }
+      if (aHas && bHas) return new Date(a.dueDate) - new Date(b.dueDate);
       if (aHas) return -1;
       if (bHas) return 1;
       return b.updatedAt - a.updatedAt;
@@ -66,8 +63,15 @@ export default function TaskApp() {
     return copy;
   }, [tasks]);
 
-  const total = tasks.length;
-  const done = tasks.filter((t) => t.completed).length;
+  const filteredTasks = useMemo(() => {
+    if (filter === "completed") return sortedTasks.filter((t) => t.completed);
+    if (filter === "incompleted")
+      return sortedTasks.filter((t) => !t.completed);
+    return sortedTasks;
+  }, [sortedTasks, filter]);
+
+  const total = filteredTasks.length;
+  const done = filteredTasks.filter((t) => t.completed).length;
   const allDone = total > 0 && done === total;
 
   const {
@@ -78,15 +82,17 @@ export default function TaskApp() {
   } = useFetch("https://api.alquran.cloud/v1/ayah/random");
 
   return (
-    <section className="task-wrap">
+    <section className="grid md:grid-cols-3 gap-6">
+      {/* Task Form */}
       <motion.aside
-        className="glass-card task-panel"
+        className="bg-white shadow-lg rounded-xl p-4 md:col-span-1"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25 }}
       >
-        <h3>{editing ? "Edit Task" : "Create Task"}</h3>
-        <div className="separator" />
+        <h3 className="text-lg font-semibold mb-2">
+          {editing ? "Edit Task" : "Create Task"}
+        </h3>
         <TaskForm
           onSave={upsertTask}
           editingTask={editing}
@@ -94,39 +100,40 @@ export default function TaskApp() {
         />
       </motion.aside>
 
+      {/* Task List */}
       <motion.section
-        className="glass-card task-panel"
+        className="bg-white shadow-lg rounded-xl p-4 md:col-span-2 flex flex-col"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05, duration: 0.25 }}
       >
-        <div className="row" style={{ justifyContent: "space-between" }}>
-          <h3>Tasks</h3>
-          <span className="badge subtle">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-lg font-semibold">Tasks</h3>
+          <span className="text-sm text-gray-500">
             {total} total • {done} done
           </span>
         </div>
-        <div className="separator" />
+        <hr className="mb-4" />
 
         {total === 0 ? (
-          <div className="empty-state">
-            <h4>No tasks yet</h4>
+          <div className="text-center py-10 text-gray-400">
+            <h4 className="text-lg font-medium">No tasks yet</h4>
             <p>Start by adding your first task and make today count ✨</p>
           </div>
         ) : (
           <>
             {allDone && (
               <motion.div
-                className="motivate"
+                className="mb-3 text-green-700 font-semibold text-center"
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
               >
                 🎉 Keep up the good work! All tasks complete.
               </motion.div>
             )}
-            <div className="task-list">
+            <div className="space-y-3 overflow-y-auto max-h-[60vh]">
               <AnimatePresence initial={false}>
-                {sortedTasks.map((t) => (
+                {filteredTasks.map((t) => (
                   <TaskCard
                     key={t.id}
                     task={t}
@@ -140,34 +147,34 @@ export default function TaskApp() {
           </>
         )}
       </motion.section>
+
+      {/* Quran Quote */}
       <motion.aside
-        className="glass-card quote-card"
+        className="bg-green-50 shadow-lg rounded-xl p-4 md:col-span-3 mt-4 md:mt-0"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.25 }}
       >
-        <h3>Quran Inspiration</h3>
-        <div className="separator" />
+        <h3 className="text-lg font-semibold mb-2 text-green-800">
+          Quran Inspiration
+        </h3>
+        <hr className="mb-2" />
         {quoteLoading ? (
-          <div className="quote-loading">
-            <div className="spinner" />
-          </div>
+          <div className="text-center py-4">Loading...</div>
         ) : quoteError ? (
-          <div className="quote-error">
+          <div className="text-center py-4">
             <p>Couldn’t fetch ayah 😢</p>
-            <button onClick={refetchQuote}>Retry</button>
+            <button
+              className="mt-2 px-3 py-1 bg-green-600 text-white rounded"
+              onClick={refetchQuote}
+            >
+              Retry
+            </button>
           </div>
         ) : (
-          <blockquote className="quote">
+          <blockquote className="text-gray-700 italic">
             {quoteData?.data?.text || "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ"}
-            <cite
-              style={{
-                display: "block",
-                marginTop: 6,
-                fontSize: ".88rem",
-                color: "var(--muted)",
-              }}
-            >
+            <cite className="block mt-2 text-sm text-gray-500">
               — {quoteData?.data?.surah?.englishName}, Ayah{" "}
               {quoteData?.data?.numberInSurah}
             </cite>

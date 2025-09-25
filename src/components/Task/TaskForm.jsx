@@ -1,124 +1,84 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function TaskForm({ onSave, editingTask, onCancel }) {
   const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
+  const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [priority, setPriority] = useState("Medium");
-  const [error, setError] = useState("");
-  const isEditing = Boolean(editingTask);
+  const [priority, setPriority] = useState("medium");
 
   useEffect(() => {
     if (editingTask) {
-      setTitle(editingTask.title || "");
-      setDesc(editingTask.description || "");
+      setTitle(editingTask.title);
+      setDescription(editingTask.description);
       setDueDate(editingTask.dueDate || "");
-      setPriority(editingTask.priority || "Medium");
-      setError("");
-    } else {
-      setTitle("");
-      setDesc("");
-      setDueDate("");
-      setPriority("Medium");
-      setError("");
+      setPriority(editingTask.priority || "medium");
     }
   }, [editingTask]);
 
-  function handleSubmit(e) {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title.trim()) {
-      setError("Task title cannot be blank");
-      return;
-    }
-    setError("");
-    onSave(
-      {
-        title: title.trim(),
-        description: desc.trim(),
-        dueDate: dueDate || "",
-        priority,
-      },
-      editingTask?.id ?? null
-    );
-  }
+    if (!title.trim()) return;
+    onSave({ title, description, dueDate, priority }, editingTask?.id);
+    setTitle("");
+    setDescription("");
+    setDueDate("");
+    setPriority("medium");
+  };
 
   return (
-    <form className="form-grid" onSubmit={handleSubmit} noValidate>
-      <div className="field">
-        <label>
-          Title <span className="req">*</span>
-        </label>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <input
+        type="text"
+        placeholder="Task title"
+        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-400"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        required
+      />
+
+      <textarea
+        placeholder="Description"
+        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-400"
+        rows="3"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
+
+      <div className="flex gap-3">
         <input
-          className="input"
-          type="text"
-          placeholder="e.g., Finish React assignment"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          aria-invalid={!!error}
+          type="date"
+          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-400"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
         />
-        {error && (
-          <div className="field-error" role="alert">
-            {error}
-          </div>
-        )}
+
+        <select
+          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-400"
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+        >
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
       </div>
 
-      <div className="field">
-        <label>Description</label>
-        <textarea
-          className="textarea"
-          rows={4}
-          placeholder="Optional notes…"
-          value={desc}
-          onChange={(e) => setDesc(e.target.value)}
-        />
-      </div>
-
-      <div className="field-row-2">
-        <div className="field">
-          <label>Due date</label>
-          <input
-            className="input"
-            type="date"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-          />
-        </div>
-
-        <div className="field">
-          <label>Priority</label>
-          <select
-            className="select"
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-          >
-            <option>Low</option>
-            <option>Medium</option>
-            <option>High</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="row" style={{ justifyContent: "flex-end", gap: 10 }}>
-        {isEditing && (
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          className="rounded-lg bg-green-600 px-4 py-2 text-white text-sm font-medium hover:bg-green-700"
+        >
+          {editingTask ? "Update Task" : "Add Task"}
+        </button>
+        {editingTask && (
           <button
             type="button"
-            className="btn btn-ghost"
-            onClick={() => {
-              setError("");
-              onCancel();
-            }}
+            onClick={onCancel}
+            className="rounded-lg bg-gray-200 px-4 py-2 text-sm font-medium hover:bg-gray-300"
           >
             Cancel
           </button>
         )}
-        <button
-          type="submit"
-          className="btn btn-primary"
-          disabled={!title.trim()}
-        >
-          {isEditing ? "Save Changes" : "Add Task"}
-        </button>
       </div>
     </form>
   );

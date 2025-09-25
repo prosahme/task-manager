@@ -1,17 +1,35 @@
 import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.jsx";
+import CompletedTasks from "./pages/CompletedTask.jsx";
+import IncompletedTasks from "./pages/IncompletedTask.jsx";
 import Header from "./components/Layout/Header.jsx";
 import Footer from "./components/Layout/Footer.jsx";
-import "./App.css";
+import TaskApp from "./components/Task/TaskApp.jsx";
 
 export default function App() {
   return (
-    <div className="app-shell">
-      <div className="bg-orb orb-1" aria-hidden="true" />
-      <div className="bg-orb orb-2" aria-hidden="true" />
-      <Header />
-      <Home />
-      <Footer />
-    </div>
+    <BrowserRouter>
+      <div className="relative min-h-screen bg-white text-gray-800 font-sans">
+        <div
+          className="absolute top-0 left-0 w-72 h-72 bg-green-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute bottom-0 right-0 w-72 h-72 bg-yellow-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"
+          aria-hidden="true"
+        />
+        <Header />
+        <main className="pt-20 pb-10 px-4 md:px-8 lg:px-16">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/tasks" element={<TaskApp />} />
+            <Route path="/completed" element={<CompletedTasks />} />
+            <Route path="/incompleted" element={<IncompletedTasks />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </BrowserRouter>
   );
 }
