@@ -10,6 +10,7 @@ const LS_KEY = "tm_tasks_v1";
 export default function TaskApp({ filter = "all" }) {
   const [tasks, setTasks] = useLocalStorage(LS_KEY, []);
   const [editing, setEditing] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   function upsertTask(data, id = null) {
     if (id) {
@@ -31,6 +32,7 @@ export default function TaskApp({ filter = "all" }) {
         updatedAt: Date.now(),
       };
       setTasks((prev) => [newTask, ...prev]);
+      setIsModalOpen(false);
     }
   }
 
@@ -48,6 +50,7 @@ export default function TaskApp({ filter = "all" }) {
       )
     );
   }
+
   const sortedTasks = useMemo(() => {
     const copy = [...tasks];
     copy.sort((a, b) => {
@@ -89,14 +92,24 @@ export default function TaskApp({ filter = "all" }) {
         transition={{ duration: 0.25 }}
       >
         <h3 className="text-lg font-semibold mb-2">
-          {editing ? "Edit Task" : "Create Task"}
+          {editing ? "Edit Task" : "Add Task"}
         </h3>
-        <TaskForm
-          onSave={upsertTask}
-          editingTask={editing}
-          onCancel={() => setEditing(null)}
-        />
+        {editing ? (
+          <TaskForm
+            onSave={upsertTask}
+            editingTask={editing}
+            onCancel={() => setEditing(null)}
+          />
+        ) : (
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="w-full bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 transition"
+          >
+            + Add Task
+          </button>
+        )}
       </motion.aside>
+
       <motion.section
         className="bg-white shadow-lg rounded-xl p-4 md:col-span-2 flex flex-col"
         initial={{ opacity: 0, y: 12 }}
@@ -110,11 +123,9 @@ export default function TaskApp({ filter = "all" }) {
           </span>
         </div>
         <hr className="mb-4" />
-
         {total === 0 ? (
           <div className="text-center py-10 text-gray-400">
             <h4 className="text-lg font-medium">No tasks yet</h4>
-
             <p>Start by adding your first task and make today count ✨</p>
           </div>
         ) : (
@@ -177,6 +188,35 @@ export default function TaskApp({ filter = "all" }) {
           </blockquote>
         )}
       </motion.aside>
+
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white p-6 rounded-xl shadow-xl w-96 relative"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+            >
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="absolute top-2 right-2 text-gray-500 hover:text-black"
+              >
+                ✖
+              </button>
+              <TaskForm
+                onSave={upsertTask}
+                onCancel={() => setIsModalOpen(false)}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
