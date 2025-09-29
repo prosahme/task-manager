@@ -8,18 +8,19 @@ export default function TaskCard({ task, onToggle, onEdit, onDelete }) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
-      className={`flex items-start justify-between gap-4 p-4 mb-3 rounded-xl shadow-md transition ${
+      className={`flex flex-col sm:flex-row sm:items-start justify-between gap-4 p-4 mb-3 rounded-xl shadow-md transition ${
         task.completed ? "bg-green-100" : "bg-white"
       }`}
     >
       <div className="flex-1">
         <h4
-          className={`text-lg font-semibold ${
+          className={`text-base sm:text-lg font-semibold ${
             task.completed ? "line-through text-gray-500" : "text-gray-800"
           }`}
         >
           {task.title}
         </h4>
+
         {task.description && (
           <p
             className={`mt-1 text-sm ${
@@ -29,11 +30,13 @@ export default function TaskCard({ task, onToggle, onEdit, onDelete }) {
             {task.description}
           </p>
         )}
+
         {task.dueDate && (
           <p className="mt-2 text-xs text-gray-500">
             📅 Due: {new Date(task.dueDate).toLocaleDateString()}
           </p>
         )}
+
         <span
           className={`inline-block mt-2 px-2 py-1 text-xs rounded-lg ${
             task.priority === "high"
@@ -47,27 +50,28 @@ export default function TaskCard({ task, onToggle, onEdit, onDelete }) {
         </span>
       </div>
 
-      {/* Buttons */}
-      <div className="flex flex-col gap-2">
+      <div className="flex sm:flex-col md:flex-row gap-2 self-start sm:self-auto">
         <button
           onClick={() => onToggle(task.id)}
-          className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
+          className={`px-3 py-1 rounded-lg text-sm font-medium transition focus:ring-2 focus:ring-offset-1 ${
             task.completed
-              ? "bg-gray-200 text-gray-600 hover:bg-gray-300"
-              : "bg-green-600 text-white hover:bg-green-700"
+              ? "bg-gray-200 text-gray-600 hover:bg-gray-300 focus:ring-gray-400"
+              : "bg-green-600 text-white hover:bg-green-700 focus:ring-green-400"
           }`}
         >
           {task.completed ? "Undo" : "Done"}
         </button>
+
         <button
           onClick={() => onEdit(task)}
-          className="px-3 py-1 rounded-lg text-sm font-medium bg-blue-500 text-white hover:bg-blue-600"
+          className="px-3 py-1 rounded-lg text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-offset-1 focus:ring-blue-400"
         >
           Edit
         </button>
+
         <button
           onClick={() => onDelete(task.id)}
-          className="px-3 py-1 rounded-lg text-sm font-medium bg-red-500 text-white hover:bg-red-600"
+          className="px-3 py-1 rounded-lg text-sm font-medium bg-red-500 text-white hover:bg-red-600 focus:ring-2 focus:ring-offset-1 focus:ring-red-400"
         >
           Delete
         </button>

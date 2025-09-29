@@ -48,7 +48,6 @@ export default function TaskApp({ filter = "all" }) {
       )
     );
   }
-
   const sortedTasks = useMemo(() => {
     const copy = [...tasks];
     copy.sort((a, b) => {
@@ -82,8 +81,7 @@ export default function TaskApp({ filter = "all" }) {
   } = useFetch("https://api.alquran.cloud/v1/ayah/random");
 
   return (
-    <section className="grid md:grid-cols-3 gap-6">
-      {/* Task Form */}
+    <section className="grid gap-6 md:grid-cols-3">
       <motion.aside
         className="bg-white shadow-lg rounded-xl p-4 md:col-span-1"
         initial={{ opacity: 0, y: 12 }}
@@ -99,15 +97,13 @@ export default function TaskApp({ filter = "all" }) {
           onCancel={() => setEditing(null)}
         />
       </motion.aside>
-
-      {/* Task List */}
       <motion.section
         className="bg-white shadow-lg rounded-xl p-4 md:col-span-2 flex flex-col"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05, duration: 0.25 }}
       >
-        <div className="flex justify-between items-center mb-2">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-2">
           <h3 className="text-lg font-semibold">Tasks</h3>
           <span className="text-sm text-gray-500">
             {total} total • {done} done
@@ -118,6 +114,7 @@ export default function TaskApp({ filter = "all" }) {
         {total === 0 ? (
           <div className="text-center py-10 text-gray-400">
             <h4 className="text-lg font-medium">No tasks yet</h4>
+
             <p>Start by adding your first task and make today count ✨</p>
           </div>
         ) : (
@@ -131,7 +128,7 @@ export default function TaskApp({ filter = "all" }) {
                 🎉 Keep up the good work! All tasks complete.
               </motion.div>
             )}
-            <div className="space-y-3 overflow-y-auto max-h-[60vh]">
+            <div className="space-y-3 overflow-y-auto max-h-[60vh] pr-2">
               <AnimatePresence initial={false}>
                 {filteredTasks.map((t) => (
                   <TaskCard
@@ -148,7 +145,6 @@ export default function TaskApp({ filter = "all" }) {
         )}
       </motion.section>
 
-      {/* Quran Quote */}
       <motion.aside
         className="bg-green-50 shadow-lg rounded-xl p-4 md:col-span-3 mt-4 md:mt-0"
         initial={{ opacity: 0, y: 12 }}
@@ -165,7 +161,7 @@ export default function TaskApp({ filter = "all" }) {
           <div className="text-center py-4">
             <p>Couldn’t fetch ayah 😢</p>
             <button
-              className="mt-2 px-3 py-1 bg-green-600 text-white rounded"
+              className="mt-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 focus:ring-2 focus:ring-green-400 transition"
               onClick={refetchQuote}
             >
               Retry

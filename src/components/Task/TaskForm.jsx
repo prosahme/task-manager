@@ -30,7 +30,7 @@ export default function TaskForm({ onSave, editingTask, onCancel }) {
       <input
         type="text"
         placeholder="Task title"
-        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-400"
+        className="w-full rounded-lg border px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-400"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
@@ -38,7 +38,7 @@ export default function TaskForm({ onSave, editingTask, onCancel }) {
 
       <textarea
         placeholder="Description"
-        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-400"
+        className="w-full rounded-lg border px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-400"
         rows="3"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
@@ -47,13 +47,13 @@ export default function TaskForm({ onSave, editingTask, onCancel }) {
       <div className="flex gap-3">
         <input
           type="date"
-          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-400"
+          className="flex-1 rounded-lg border px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-400"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
         />
 
         <select
-          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-400"
+          className="flex-1 rounded-lg border px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-400"
           value={priority}
           onChange={(e) => setPriority(e.target.value)}
         >
@@ -66,7 +66,7 @@ export default function TaskForm({ onSave, editingTask, onCancel }) {
       <div className="flex gap-2">
         <button
           type="submit"
-          className="rounded-lg bg-green-600 px-4 py-2 text-white text-sm font-medium hover:bg-green-700"
+          className="rounded-lg bg-green-600 px-4 py-2 text-white text-sm font-medium hover:bg-green-700 transform hover:scale-105 transition"
         >
           {editingTask ? "Update Task" : "Add Task"}
         </button>
