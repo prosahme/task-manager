@@ -8,8 +8,8 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   const linkClass = (path) =>
-    `hover:text-green-600 transition-colors duration-200 ${
-      location.pathname === path ? "text-green-600 font-bold" : "text-gray-600"
+    `hover:text-indigo-500 transition-colors duration-200 ${
+      location.pathname === path ? "text-indigo-600 font-bold" : "text-gray-700"
     }`;
 
   const navLinks = [
@@ -20,8 +20,9 @@ export default function Header() {
   ];
 
   return (
-    <header className="w-full fixed top-0 left-0 z-50 bg-white/80 backdrop-blur-md shadow-md">
+    <header className="w-full fixed top-0 left-0 z-50 bg-white/90 backdrop-blur-md shadow-md">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-8 py-3">
+        {/* Logo */}
         <motion.div
           className="flex items-center space-x-3"
           initial={{ y: -18, opacity: 0 }}
@@ -29,17 +30,18 @@ export default function Header() {
           transition={{ type: "spring", stiffness: 350, damping: 22 }}
         >
           <Link to="/" className="flex items-center space-x-3">
-            <div className="text-green-600 font-bold text-xl rounded-full w-10 h-10 flex items-center justify-center bg-green-100">
+            <div className="text-indigo-600 font-bold text-xl rounded-full w-10 h-10 flex items-center justify-center bg-indigo-100">
               TM
             </div>
             <div className="text-gray-800 font-semibold text-lg">
-              My own task manager
+              My Task Manager
             </div>
           </Link>
         </motion.div>
 
+        {/* Desktop Nav */}
         <motion.nav
-          className="hidden md:flex items-center space-x-4"
+          className="hidden md:flex items-center space-x-6"
           initial={{ y: -18, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{
@@ -56,8 +58,8 @@ export default function Header() {
           ))}
 
           <a
-            className="flex items-center bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 transition-colors duration-200"
-            href="https://github.com/"
+            className="flex items-center bg-indigo-600 text-white px-3 py-2 rounded-md hover:bg-indigo-700 transition-colors duration-200"
+            href="https://github.com/YOUR_USERNAME/YOUR_REPO"
             target="_blank"
             rel="noreferrer"
           >
@@ -66,6 +68,7 @@ export default function Header() {
           </a>
         </motion.nav>
 
+        {/* Mobile Button */}
         <div className="md:hidden">
           <button onClick={() => setIsOpen(!isOpen)} className="text-gray-700">
             {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
@@ -73,6 +76,7 @@ export default function Header() {
         </div>
       </div>
 
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -94,8 +98,8 @@ export default function Header() {
             ))}
 
             <a
-              className="flex items-center bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 transition-colors duration-200"
-              href="https://github.com/"
+              className="flex items-center bg-indigo-600 text-white px-3 py-2 rounded-md hover:bg-indigo-700 transition-colors duration-200"
+              href="https://github.com/prosahme/task-manager.git"
               target="_blank"
               rel="noreferrer"
               onClick={() => setIsOpen(false)}

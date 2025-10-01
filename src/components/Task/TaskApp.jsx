@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import TaskForm from "./TaskForm.jsx";
 import TaskCard from "./TaskCard.jsx";
@@ -81,88 +81,94 @@ export default function TaskApp({ filter = "all" }) {
     loading: quoteLoading,
     error: quoteError,
     refetch: refetchQuote,
-  } = useFetch("https://api.alquran.cloud/v1/ayah/random");
+  } = useFetch("https://api.quranhub.com/v1/ayah/random");
 
   return (
-    <section className="grid gap-6 md:grid-cols-3">
-      <motion.aside
-        className="bg-white shadow-lg rounded-xl p-4 md:col-span-1"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25 }}
-      >
-        <h3 className="text-lg font-semibold mb-2">
-          {editing ? "Edit Task" : "Add Task"}
-        </h3>
-        {editing ? (
-          <TaskForm
-            onSave={upsertTask}
-            editingTask={editing}
-            onCancel={() => setEditing(null)}
-          />
-        ) : (
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="w-full bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 transition"
-          >
-            + Add Task
-          </button>
-        )}
-      </motion.aside>
+    <section className="bg-gray-100 min-h-screen p-4 flex flex-col">
+      {/* Tasks & Sidebar */}
+      <div className="grid gap-6 md:grid-cols-3 flex-1">
+        {/* Sidebar / Add Task */}
+        <motion.aside
+          className="bg-white shadow-md rounded-xl p-4 md:col-span-1 flex flex-col"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25 }}
+        >
+          <h3 className="text-lg font-semibold mb-2">
+            {editing ? "Edit Task" : "Add Task"}
+          </h3>
+          {editing ? (
+            <TaskForm
+              onSave={upsertTask}
+              editingTask={editing}
+              onCancel={() => setEditing(null)}
+            />
+          ) : (
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="w-full bg-gray-800 text-white px-4 py-2 rounded-lg shadow hover:bg-gray-900 transition"
+            >
+              + Add Task
+            </button>
+          )}
+        </motion.aside>
 
-      <motion.section
-        className="bg-white shadow-lg rounded-xl p-4 md:col-span-2 flex flex-col"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.05, duration: 0.25 }}
-      >
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-2">
-          <h3 className="text-lg font-semibold">Tasks</h3>
-          <span className="text-sm text-gray-500">
-            {total} total • {done} done
-          </span>
-        </div>
-        <hr className="mb-4" />
-        {total === 0 ? (
-          <div className="text-center py-10 text-gray-400">
-            <h4 className="text-lg font-medium">No tasks yet</h4>
-            <p>Start by adding your first task and make today count ✨</p>
+        {/* Task List */}
+        <motion.section
+          className="bg-white shadow-md rounded-xl p-4 md:col-span-2 flex flex-col"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05, duration: 0.25 }}
+        >
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-2">
+            <h3 className="text-lg font-semibold">Tasks</h3>
+            <span className="text-sm text-gray-500">
+              {total} total • {done} done
+            </span>
           </div>
-        ) : (
-          <>
-            {allDone && (
-              <motion.div
-                className="mb-3 text-green-700 font-semibold text-center"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                🎉 Keep up the good work! All tasks complete.
-              </motion.div>
-            )}
-            <div className="space-y-3 overflow-y-auto max-h-[60vh] pr-2">
-              <AnimatePresence initial={false}>
-                {filteredTasks.map((t) => (
-                  <TaskCard
-                    key={t.id}
-                    task={t}
-                    onToggle={toggleComplete}
-                    onEdit={setEditing}
-                    onDelete={deleteTask}
-                  />
-                ))}
-              </AnimatePresence>
+          <hr className="mb-4" />
+          {total === 0 ? (
+            <div className="text-center py-10 text-gray-400">
+              <h4 className="text-lg font-medium">No tasks yet</h4>
+              <p>Start by adding your first task and make today count ✨</p>
             </div>
-          </>
-        )}
-      </motion.section>
+          ) : (
+            <>
+              {allDone && (
+                <motion.div
+                  className="mb-3 text-green-700 font-semibold text-center"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  🎉 Keep up the good work! All tasks complete.
+                </motion.div>
+              )}
+              <div className="space-y-3 overflow-y-auto max-h-[60vh] pr-2">
+                <AnimatePresence initial={false}>
+                  {filteredTasks.map((t) => (
+                    <TaskCard
+                      key={t.id}
+                      task={t}
+                      onToggle={toggleComplete}
+                      onEdit={setEditing}
+                      onDelete={deleteTask}
+                    />
+                  ))}
+                </AnimatePresence>
+              </div>
+            </>
+          )}
+        </motion.section>
+      </div>
 
+      {/* Quran Inspiration Footer */}
       <motion.aside
-        className="bg-green-50 shadow-lg rounded-xl p-4 md:col-span-3 mt-4 md:mt-0"
+        className="bg-white shadow-md rounded-xl p-4 mt-6"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.25 }}
       >
-        <h3 className="text-lg font-semibold mb-2 text-green-800">
+        <h3 className="text-lg font-semibold mb-2 text-gray-800">
           Quran Inspiration
         </h3>
         <hr className="mb-2" />
@@ -172,7 +178,7 @@ export default function TaskApp({ filter = "all" }) {
           <div className="text-center py-4">
             <p>Couldn’t fetch ayah 😢</p>
             <button
-              className="mt-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 focus:ring-2 focus:ring-green-400 transition"
+              className="mt-2 px-3 py-1 bg-gray-800 text-white rounded hover:bg-gray-900 focus:ring-2 focus:ring-gray-400 transition"
               onClick={refetchQuote}
             >
               Retry
@@ -189,6 +195,7 @@ export default function TaskApp({ filter = "all" }) {
         )}
       </motion.aside>
 
+      {/* Floating Add Task Button */}
       <AnimatePresence>
         {isModalOpen && (
           <motion.div
@@ -207,7 +214,7 @@ export default function TaskApp({ filter = "all" }) {
                 onClick={() => setIsModalOpen(false)}
                 className="absolute top-2 right-2 text-gray-500 hover:text-black"
               >
-                ✖
+                ✖️
               </button>
               <TaskForm
                 onSave={upsertTask}
