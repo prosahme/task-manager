@@ -85,9 +85,8 @@ export default function TaskApp({ filter = "all" }) {
 
   return (
     <section className="bg-gray-100 min-h-screen p-4 flex flex-col">
-      {/* Tasks & Sidebar */}
+      
       <div className="grid gap-6 md:grid-cols-3 flex-1">
-        {/* Sidebar / Add Task */}
         <motion.aside
           className="bg-white shadow-md rounded-xl p-4 md:col-span-1 flex flex-col"
           initial={{ opacity: 0, y: 12 }}
@@ -113,7 +112,7 @@ export default function TaskApp({ filter = "all" }) {
           )}
         </motion.aside>
 
-        {/* Task List */}
+        {/
         <motion.section
           className="bg-white shadow-md rounded-xl p-4 md:col-span-2 flex flex-col"
           initial={{ opacity: 0, y: 12 }}
@@ -161,7 +160,6 @@ export default function TaskApp({ filter = "all" }) {
         </motion.section>
       </div>
 
-      {/* Quran Inspiration Footer */}
       <motion.aside
         className="bg-white shadow-md rounded-xl p-4 mt-6"
         initial={{ opacity: 0, y: 12 }}
@@ -195,7 +193,6 @@ export default function TaskApp({ filter = "all" }) {
         )}
       </motion.aside>
 
-      {/* Floating Add Task Button */}
       <AnimatePresence>
         {isModalOpen && (
           <motion.div
