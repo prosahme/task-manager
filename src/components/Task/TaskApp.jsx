@@ -111,8 +111,6 @@ export default function TaskApp({ filter = "all" }) {
             </button>
           )}
         </motion.aside>
-
-        {/
         <motion.section
           className="bg-white shadow-md rounded-xl p-4 md:col-span-2 flex flex-col"
           initial={{ opacity: 0, y: 12 }}
